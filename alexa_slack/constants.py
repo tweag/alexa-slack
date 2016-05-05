@@ -1,0 +1,5 @@
+import os
+
+AWS_VENDOR_ID = os.getenv('AWS_VENDOR_ID')
+SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
+SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')
