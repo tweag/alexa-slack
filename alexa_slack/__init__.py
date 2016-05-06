@@ -12,7 +12,7 @@ app.response_class = AlexaResponseWrapper
 @app.before_request
 def log_request_json():
     print request.headers
-    print request.json
+    print request.get_data()
 
 
 import alexa_slack.intent_handlers
