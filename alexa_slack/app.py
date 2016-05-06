@@ -31,7 +31,7 @@ def log_request_json():
 
 @handle_launch_request
 def handle_launch(request):
-    return PlainTextSpeech('Launching Slackbot')
+    return PlainTextSpeech('Launching Slack bot')
 
 
 @handle_intent('SetChannel')
@@ -66,9 +66,27 @@ def handle_confirmation(request):
             should_end_session=False,
         )
     elif request.session.get('confirming_message'):
-        return PlainTextSpeech('Imma gonna do that now')
+        return post_to_slack(request)
     else:
         return PlainTextSpeech('Ooops')
+
+
+def post_to_slack(request):
+    channel = request.session.get('channel')
+    text = request.session.get('message')
+    token = request.access_token
+    url = 'https://slack.com/api/chat.postMessage'
+    res = requests.post(url, {
+        'token': token,
+        'channel': channel,
+        'text': text,
+        # 'as_user': False,
+        # 'username': 'Benevolent Robot Foosball Overlord',
+    })
+    if res.json()['ok']:
+        return PlainTextSpeech("Okay. It's done.")
+    else:
+        return PlainTextSpeech('Oops, something went wrong.')
 
 
 @handle_intent('StartMessage')
