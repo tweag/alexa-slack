@@ -32,7 +32,7 @@ def handle_confirmation(request):
         return Response(
             speech=PlainTextSpeech('What would you like to post? Say "my message is" followed by the message you would like me to post.'),
             reprompt=PlainTextSpeech('Say "my message is" followed by the message you would like me to post'),
-            session=request.session,
+            session={'channel': request.session.get('channel')},
             should_end_session=False,
         )
     elif request.session.get('confirming_message'):
