@@ -94,10 +94,7 @@ def oauth_redirect():
         auth=(SLACK_CLIENT_ID, SLACK_CLIENT_SECRET)
     )
     response_json = response.json()
-    if 'bot' in response_json:
-        access_token = response_json['bot'].get('bot_access_token')
-    else:
-        access_token = response_json['access_token']
+    access_token = response_json.get('access_token')
 
     redirect_url = 'https://pitangui.amazon.com/spa/skill/account-linking-status.html?vendorId={}'.format(AWS_VENDOR_ID)
     redirect_url += '#{}'.format(urlencode({'access_token': access_token, 'state': state, 'token_type': 'Bearer'}))
