@@ -36,7 +36,32 @@ def handle_launch(request):
 
 @handle_intent('SetChannel')
 def handle_echo_intent(request):
-    return PlainTextSpeech(request.slots.get('channel', 'No channel'))
+    channel = request.slots.get('channel')
+    return Response(
+        speech=PlainTextSpeech('Did you say {}?'.format(channel)),
+        should_end_session=False,
+        session={'confirming_channel': True, 'channel': channel}
+    )
+
+
+@handle_intent('AMAZON.YesIntent')
+def handle_confirmation(request):
+    if request.session.get('confirming_channel'):
+        return PlainTextSpeech('Ok, I will send a message to {}'.format(request.session.get('channel', 'unknown channel')))
+    else:
+        return PlainTextSpeech('Ooops')
+
+
+@handle_intent('StartMessage')
+def handle_start_message(request):
+    if not request.access_token:
+        return Response(
+            speech=PlainTextSpeech('You must sign in first'),
+            card=LinkAccountCard(),
+        )
+    speech = PlainTextSpeech('What channel would you like to post to?')
+    reprompt = PlainTextSpeech('Say the name of the channel you would like to post to')
+    return Response(speech=speech, reprompt=reprompt, should_end_session=False)
 
 
 @handle_intent('unrecognized_intent')
