@@ -1,3 +1,5 @@
+import requests
+
 from pylexa.app import handle_launch_request
 from pylexa.intent import handle_intent
 from pylexa.response import LinkAccountCard, PlainTextSpeech, Response
@@ -68,7 +70,7 @@ def post_to_slack(request):
         'token': token,
         'channel': channel,
         'text': text,
-        'as_user': False,
+        'as_user': True,
     })
     if res.json()['ok']:
         return PlainTextSpeech("Okay. Your message has been posted.")
