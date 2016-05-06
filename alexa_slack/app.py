@@ -35,7 +35,7 @@ def handle_launch(request):
 
 
 @handle_intent('SetChannel')
-def handle_echo_intent(request):
+def handle_set_channel_intent(request):
     channel = request.slots.get('channel')
     return Response(
         speech=PlainTextSpeech('Did you say {}?'.format(channel)),
@@ -44,10 +44,29 @@ def handle_echo_intent(request):
     )
 
 
+@handle_intent('SetMessage')
+def handle_set_message_intent(request):
+    message = request.slots.get('message')
+    channel = request.session.get('channel')
+    return Response(
+        speech=PlainTextSpeech('Great. Would you like me to post {} to {}'.format(message, channel)),
+        session={'channel': channel, 'message': message, 'confirming_message': True},
+        should_end_session=False,
+    )
+
+
 @handle_intent('AMAZON.YesIntent')
 def handle_confirmation(request):
     if request.session.get('confirming_channel'):
-        return PlainTextSpeech('Ok, I will send a message to {}'.format(request.session.get('channel', 'unknown channel')))
+        channel = request.session.get('channel', 'unknown channel')
+        return Response(
+            speech=PlainTextSpeech('What would you like to post?'),
+            reprompt=PlainTextSpeech('Say the message you would like me to post'),
+            session=request.session,
+            should_end_session=False,
+        )
+    elif request.session.get('confirming_message'):
+        return PlainTextSpeech('Imma gonna do that now')
     else:
         return PlainTextSpeech('Ooops')
 
