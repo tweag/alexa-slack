@@ -27,10 +27,9 @@ def handle_set_message_intent(request):
 @handle_intent('AMAZON.YesIntent')
 def handle_confirmation(request):
     if request.session.get('confirming_channel'):
-        channel = request.session.get('channel', 'unknown channel')
         return Response(
-            speech=PlainTextSpeech('What would you like to post?'),
-            reprompt=PlainTextSpeech('Say the message you would like me to post'),
+            speech=PlainTextSpeech('What would you like to post? Say "my message is" followed by the message you would like me to post.'),
+            reprompt=PlainTextSpeech('Say "my message is" followed by the message you would like me to post'),
             session=request.session,
             should_end_session=False,
         )
@@ -38,6 +37,26 @@ def handle_confirmation(request):
         return post_to_slack(request)
     else:
         return PlainTextSpeech('Ooops')
+
+
+@handle_intent('AMAZON.NoIntent')
+def handle_no(request):
+    if request.session.get('confirming_channel'):
+        return Response(
+            speech=PlainTextSpeech("Ok, let's try that again. What channel would you like to post your message to?"),
+            reprompt=PlainTextSpeech('Say the name of the channel you would like to post to.'),
+            should_end_session=False
+        )
+    elif request.session.get('confirming_message'):
+        return Response(
+            speech=PlainTextSpeech("Ok, let's try that again. What would you like to post? Say 'my message is' followed by the message you would like to post"),
+            reprompt=PlainTextSpeech('Say "my message is" followed by the message you would like me to post'),
+            session=request.session,
+            should_end_session=False
+        )
+    else:
+        return PlainTextSpeech('Goodbye')
+
 
 
 def post_to_slack(request):
@@ -49,11 +68,10 @@ def post_to_slack(request):
         'token': token,
         'channel': channel,
         'text': text,
-        # 'as_user': False,
-        # 'username': 'Benevolent Robot Foosball Overlord',
+        'as_user': False,
     })
     if res.json()['ok']:
-        return PlainTextSpeech("Okay. It's done.")
+        return PlainTextSpeech("Okay. Your message has been posted.")
     else:
         return PlainTextSpeech('Oops, something went wrong.')
 
