@@ -29,11 +29,6 @@ def log_request_json():
     print request.json
 
 
-@handle_launch_request
-def handle_launch(request):
-    return PlainTextSpeech('Launching Slack bot')
-
-
 @handle_intent('SetChannel')
 def handle_set_channel_intent(request):
     channel = request.slots.get('channel')
@@ -90,6 +85,7 @@ def post_to_slack(request):
 
 
 @handle_intent('StartMessage')
+@handle_launch_request
 def handle_start_message(request):
     if not request.access_token:
         return Response(
