@@ -60,7 +60,6 @@ def handle_no(request):
         return PlainTextSpeech('Goodbye')
 
 
-
 def post_to_slack(request):
     channel = request.session.get('channel')
     text = request.session.get('message')
@@ -75,7 +74,10 @@ def post_to_slack(request):
     if res.json()['ok']:
         return PlainTextSpeech("Okay. Your message has been posted.")
     else:
-        return PlainTextSpeech('Oops, something went wrong.')
+        error = res.json().get('error')
+        if error == 'channel_not_found':
+            return PlainTextSpeech('Sorry, I could not find the {} channel'.format(channel))
+        return PlainTextSpeech('Oh no, something went wrong.')
 
 
 @handle_intent('StartMessage')
