@@ -5,25 +5,45 @@ from pylexa.intent import handle_intent
 from pylexa.response import LinkAccountCard, PlainTextSpeech, Response
 
 
+def make_set_channel_response(message=None):
+    speech = PlainTextSpeech('What channel would you like to post your message to?')
+    reprompt = PlainTextSpeech('Say the name of the channel you would like to post to')
+    session = {
+        'message': message,
+    }
+    return Response(speech=speech, reprompt=reprompt, should_end_session=False, session=session)
+
+
+def make_confirm_message_response(message, channel):
+    return Response(
+        speech=PlainTextSpeech('Great. Would you like me to post {} to {}'.format(message, channel)),
+        session={'channel': channel, 'message': message, 'confirming_message': True},
+        should_end_session=False,
+    )
+
+
 @handle_intent('SetChannel')
 def handle_set_channel_intent(request):
+    message = request.session.get('message')
     channel = request.slots.get('channel')
-    return Response(
-        speech=PlainTextSpeech('Did you say {}?'.format(channel)),
-        should_end_session=False,
-        session={'confirming_channel': True, 'channel': channel}
-    )
+    if message and channel:
+        return make_confirm_message_response(message, channel)
+    else:
+        return Response(
+            speech=PlainTextSpeech('Did you say {}?'.format(channel)),
+            should_end_session=False,
+            session={'confirming_channel': True, 'channel': channel}
+        )
 
 
 @handle_intent('SetMessage')
 def handle_set_message_intent(request):
     message = request.slots.get('message')
     channel = request.session.get('channel')
-    return Response(
-        speech=PlainTextSpeech('Great. Would you like me to post {} to {}'.format(message, channel)),
-        session={'channel': channel, 'message': message, 'confirming_message': True},
-        should_end_session=False,
-    )
+    if message and channel:
+        return make_confirm_message_response(message, channel)
+    else:
+        return make_set_channel_response(message)
 
 
 @handle_intent('AMAZON.YesIntent')
@@ -38,7 +58,7 @@ def handle_confirmation(request):
     elif request.session.get('confirming_message'):
         return post_to_slack(request)
     else:
-        return PlainTextSpeech('Ooops')
+        return PlainTextSpeech("I'm sorry, I didn't understand your request")
 
 
 @handle_intent('AMAZON.NoIntent')
@@ -88,9 +108,7 @@ def handle_start_message(request):
             speech=PlainTextSpeech('You must sign in first'),
             card=LinkAccountCard(),
         )
-    speech = PlainTextSpeech('What channel would you like to post your message to?')
-    reprompt = PlainTextSpeech('Say the name of the channel you would like to post to')
-    return Response(speech=speech, reprompt=reprompt, should_end_session=False)
+    return make_set_channel_response()
 
 
 @handle_intent('unrecognized_intent')
