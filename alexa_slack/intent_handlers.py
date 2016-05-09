@@ -1,8 +1,8 @@
-import requests
-
 from pylexa.app import handle_launch_request
 from pylexa.intent import handle_intent
 from pylexa.response import LinkAccountCard, PlainTextSpeech, Response
+
+from alexa_slack.slack import post_to_slack
 
 
 def make_set_channel_response(message=None, retry=False):
@@ -66,7 +66,10 @@ def handle_confirmation(request):
     if request.session.get('confirming_channel'):
         return make_set_message_response(request.session.get('channel'))
     elif request.session.get('confirming_message'):
-        return post_to_slack(request)
+        channel = request.session.get('channel')
+        message = request.session.get('message')
+        token = request.access_token
+        return post_to_slack(channel, message, token)
     else:
         return PlainTextSpeech("I'm sorry, I didn't understand your request")
 
@@ -79,26 +82,6 @@ def handle_no(request):
         return make_set_message_response(request.session.get('channel'), retry=True)
     else:
         return PlainTextSpeech('Goodbye')
-
-
-def post_to_slack(request):
-    channel = request.session.get('channel')
-    text = request.session.get('message')
-    token = request.access_token
-    url = 'https://slack.com/api/chat.postMessage'
-    res = requests.post(url, {
-        'token': token,
-        'channel': channel,
-        'text': text,
-        'as_user': False,
-    })
-    if res.json()['ok']:
-        return PlainTextSpeech("Okay. Your message has been posted.")
-    else:
-        error = res.json().get('error')
-        if error == 'channel_not_found':
-            return PlainTextSpeech('Sorry, I could not find the {} channel'.format(channel))
-        return PlainTextSpeech('Oh no, something went wrong.')
 
 
 @handle_intent('StartMessage')
