@@ -30,8 +30,8 @@ def handle_set_message_intent(request):
 def handle_confirmation(request):
     if request.session.get('confirming_channel'):
         return Response(
-            speech=PlainTextSpeech('What would you like to post? Say "my message is" followed by the message you would like me to post.'),
-            reprompt=PlainTextSpeech('Say "my message is" followed by the message you would like me to post'),
+            speech=PlainTextSpeech('What would you like to post?'),
+            reprompt=PlainTextSpeech('Say the message you would like me to post'),
             session={'channel': request.session.get('channel')},
             should_end_session=False,
         )
@@ -51,8 +51,8 @@ def handle_no(request):
         )
     elif request.session.get('confirming_message'):
         return Response(
-            speech=PlainTextSpeech("Ok, let's try that again. What would you like to post? Say 'my message is' followed by the message you would like to post"),
-            reprompt=PlainTextSpeech('Say "my message is" followed by the message you would like me to post'),
+            speech=PlainTextSpeech("Ok, let's try that again. What would you like to post?"),
+            reprompt=PlainTextSpeech('Say the message you would like me to post'),
             session=request.session,
             should_end_session=False
         )
