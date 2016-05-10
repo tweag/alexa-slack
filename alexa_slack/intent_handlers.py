@@ -99,3 +99,13 @@ def handle_start_message(request):
 def handle_unrecognized_intent(request):
     return PlainTextSpeech("I'm sorry, I didn't understand that")
 
+
+@handle_intent('AMAZON.StopIntent')
+@handle_intent('AMAZON.CancelIntent')
+def handle_cancel_intent(request):
+    return PlainTextSpeech('Goodbye')
+
+
+@handle_intent('AMAZON.StartOverIntent')
+def handle_start_over_intent(request):
+    return make_set_channel_response()
