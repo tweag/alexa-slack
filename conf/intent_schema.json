@@ -1,0 +1,46 @@
+{
+  "intents": [
+    {
+      "intent": "StartMessage"
+    },
+    {
+      "intent": "SetChannel",
+      "slots": [
+        {
+          "name": "channel",
+          "type": "LIST_OF_CHANNELS"
+        }
+      ]
+    },
+    {
+      "intent": "SetMessage",
+      "slots": [
+        {
+          "name": "message",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.StartOverIntent"
+    },
+    {
+      "intent": "AMAZON.RepeatIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
