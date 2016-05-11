@@ -1,0 +1,5 @@
+cryptography
+flask
+gunicorn
+pylexa==0.0.9
+requests
