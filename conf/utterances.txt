@@ -1,0 +1,3 @@
+SetChannel {channel}
+SetChannel i want to post to {channel}
+SetMessage {some message|message}
