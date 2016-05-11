@@ -71,7 +71,11 @@ def handle_confirmation(request):
         token = request.access_token
         return post_to_slack(channel, message, token)
     else:
-        return PlainTextSpeech("I'm sorry, I didn't understand your request")
+        return Response(
+            speech=PlainTextSpeech("I'm sorry, I didn't understand your request"),
+            session=request.session,
+            should_end_session=False,
+        )
 
 
 @handle_intent('AMAZON.NoIntent')
