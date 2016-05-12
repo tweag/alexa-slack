@@ -38,9 +38,6 @@
       "intent": "AMAZON.StartOverIntent"
     },
     {
-      "intent": "AMAZON.RepeatIntent"
-    },
-    {
       "intent": "AMAZON.HelpIntent"
     },
     {
