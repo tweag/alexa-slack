@@ -120,3 +120,12 @@ def handle_cancel_intent(request):
 @handle_intent('AMAZON.StartOverIntent')
 def handle_start_over_intent(request):
     return make_set_channel_response()
+
+
+@handle_intent('AMAZON.HelpIntent')
+def handle_help_intent(request):
+    return PlainTextSpeech("""
+        You can begin by saying the name of the channel you would like to post to.
+        After that, you'll be prompted for the message to post. Once you confirm
+        the message and channel, your message will be posted.
+    """)
