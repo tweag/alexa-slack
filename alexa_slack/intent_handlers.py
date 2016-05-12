@@ -61,6 +61,13 @@ def handle_set_message_intent(request):
         return make_set_channel_response(message)
 
 
+@handle_intent('SetChannelMessage')
+def handle_set_channel_message_intent(request):
+    channel = request.slots.get('channel')
+    message = request.slots.get('message')
+    return make_confirm_message_response(message, channel)
+
+
 @handle_intent('AMAZON.YesIntent')
 def handle_confirmation(request):
     if request.session.get('confirming_channel'):
