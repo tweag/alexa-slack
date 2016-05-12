@@ -3,8 +3,11 @@ from flask import Flask, request
 from pylexa.app import alexa_blueprint
 from pylexa.response import AlexaResponseWrapper
 
+from alexa_slack.constants import ALEXA_APP_ID
+
 
 app = Flask(__name__)
+alexa_blueprint.app_id = ALEXA_APP_ID
 app.register_blueprint(alexa_blueprint)
 app.response_class = AlexaResponseWrapper
 

@@ -1,5 +1,6 @@
 import os
 
+ALEXA_APP_ID = os.getenv('ALEXA_APP_ID')
 AWS_VENDOR_ID = os.getenv('AWS_VENDOR_ID')
 SLACK_CLIENT_ID = os.getenv('SLACK_CLIENT_ID')
 SLACK_CLIENT_SECRET = os.getenv('SLACK_CLIENT_SECRET')

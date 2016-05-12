@@ -1,3 +1,9 @@
+StartMessage i want to post a message
+StartMessage start a message
 SetChannel {channel}
 SetChannel i want to post to {channel}
-SetMessage {some message|message}
+SetChannelMessage i want to post {message} to {channel}
+SetChannelMessage I'd like to post {message} to {channel}
+SetMessage {message}
+SetMessage send {message}
+SetMessage post {message}
