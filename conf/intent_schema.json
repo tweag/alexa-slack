@@ -13,11 +13,24 @@
       ]
     },
     {
+      "intent": "SetChannelMessage",
+      "slots": [
+        {
+          "name": "message",
+          "type": "SLACK_MESSAGE"
+        },
+        {
+          "name": "channel",
+          "type": "LIST_OF_CHANNELS"
+        }
+      ]
+    },
+    {
       "intent": "SetMessage",
       "slots": [
         {
           "name": "message",
-          "type": "AMAZON.LITERAL"
+          "type": "SLACK_MESSAGE"
         }
       ]
     },
