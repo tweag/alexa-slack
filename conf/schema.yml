@@ -1,0 +1,46 @@
+intents:
+  - StartMessage
+  - SetChannel:
+      channel: LIST_OF_CHANNELS
+  - SetChannelMessage:
+      message: SLACK_MESSAGE
+      channel: LIST_OF_CHANNELS
+  - SetMessage:
+      message: SLACK_MESSAGE
+  - AMAZON.StartOverIntent
+  - AMAZON.HelpIntent
+  - AMAZON.YesIntent
+  - AMAZON.NoIntent
+  - AMAZON.StopIntent
+  - AMAZON.CancelIntent
+
+slots:
+  LIST_OF_CHANNELS:
+    - random
+    - general
+    - botstuff
+    - foos
+  SLACK_MESSAGE:
+    - Hello
+    - Hello World
+    - This is my message
+    - Hey
+    - I'm on my way
+    - I'm running late today
+    - This is a short message
+    - This is a longer message with more words that I want people in slack to see
+
+utterances:
+  StartMessage:
+    - I want to post a message
+    - Start a message
+  SetChannel:
+    - '{channel}'
+    - I want to post to {channel}
+  SetChannelMessage:
+    - I want to post {message} to {channel}
+    - I'd like to post {message} to {channel}
+  SetMessage:
+    - '{message}'
+    - send {message}
+    - post {message}
