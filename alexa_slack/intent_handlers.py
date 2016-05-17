@@ -122,10 +122,48 @@ def handle_start_over_intent(request):
     return make_set_channel_response()
 
 
+def get_help_text(session):
+    channel = session.get('channel')
+    message = session.get('message')
+    default_text = (
+        "You can begin by saying the name of the channel you would like to "
+        "post to. After that, you'll be prompted for the message to post. "
+        "Once you confirm the message and channel, your message will be "
+        "posted. What channel would you like to post to?"
+    )
+
+    if not message and not channel:
+        return default_text
+
+    if session.get('confirming_channel'):
+        return (
+            "Do you want to post to the {} channel? Say yes if that channel is "
+            "correct, or say no if you would like to specify another channel."
+        ).format(channel)
+
+    if session.get('confirming_message'):
+        return (
+            "Do you want to post {} to {}? Say yes if the channel and message "
+            "are correct, or say no if you would like to specify another message."
+        ).format(message, channel)
+
+    if not message:
+        return (
+            "You can now say the message you want to post to {}. What message "
+            "would you like to post?"
+        ).format(channel)
+
+    if not channel:
+        return "What channel would you like to post your message to?"
+
+    return default_text
+
+
 @handle_intent('AMAZON.HelpIntent')
 def handle_help_intent(request):
-    return PlainTextSpeech("""
-        You can begin by saying the name of the channel you would like to post to.
-        After that, you'll be prompted for the message to post. Once you confirm
-        the message and channel, your message will be posted.
-    """)
+    text = get_help_text(request.session)
+    return Response(
+        speech=PlainTextSpeech(text),
+        should_end_session=False,
+        session=request.session,
+    )
