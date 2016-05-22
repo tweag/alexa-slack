@@ -43,6 +43,11 @@ def handle_set_channel_intent(request):
     channel = request.slots.get('channel')
     if message and channel:
         return make_confirm_message_response(message, channel)
+    elif request.session.get('channel'):
+        # if channel was already set, assume this was misinterpreted and should
+        # be a SetMessage intent
+        request.slots['message'] = channel
+        return handle_set_message_intent(request)
     else:
         return Response(
             speech=PlainTextSpeech('Did you say {}?'.format(channel)),
@@ -57,6 +62,11 @@ def handle_set_message_intent(request):
     channel = request.session.get('channel')
     if message and channel:
         return make_confirm_message_response(message, channel)
+    elif request.session.get('message'):
+        # if message was already set, assume this was misinterpreted and should
+        # be a SetChannel intent
+        request.slots['channel'] = message
+        return handle_set_channel_intent(request)
     else:
         return make_set_channel_response(message)
 

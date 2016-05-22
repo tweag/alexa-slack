@@ -48,3 +48,32 @@ class TestSetChannelIntentWhenMessageAlreadySet(_AlexaTestCase):
             self.output.response.outputSpeech.text,
             'Great. Would you like me to post {} to {}?'.format(self.message, self.channel)
         )
+
+
+class TestSetChannelWhenChannelAlreadySet(_AlexaTestCase):
+
+    existing_channel = 'foo'
+    new_channel = 'hello'
+
+    def input(self):
+        return self.make_intent_request(
+            'SetChannel',
+            session={'channel': self.existing_channel},
+            channel=self.new_channel,
+        )
+
+    def should_not_end_session(self):
+        self.assertFalse(self.output.response.shouldEndSession)
+
+    def should_set_session_attributes(self):
+        self.assertEqual(self.output.sessionAttributes, {
+            'channel': self.existing_channel,
+            'message': self.new_channel,
+            'confirming_message': True
+        })
+
+    def should_ask_for_confirmation(self):
+        self.assertEqual(
+            self.output.response.outputSpeech.text,
+            'Great. Would you like me to post {} to {}?'.format(self.new_channel, self.existing_channel)
+        )

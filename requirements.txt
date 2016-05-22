@@ -1,5 +1,5 @@
 cryptography
 flask
 gunicorn
-pylexa==0.0.14
+pylexa==0.0.15
 requests
