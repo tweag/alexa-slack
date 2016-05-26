@@ -5,6 +5,18 @@ from pylexa.response import LinkAccountCard, PlainTextSpeech, Response
 from alexa_slack.slack import post_to_slack
 
 
+def require_access_token(func):
+    def inner(request):
+        if not request.access_token:
+            return Response(
+                speech=PlainTextSpeech('You must sign in first'),
+                card=LinkAccountCard(),
+            )
+        else:
+            return func(request)
+    return inner
+
+
 def make_set_channel_response(message=None, retry=False):
     text = 'What channel would you like to post your message to?'
     if retry:
@@ -38,6 +50,7 @@ def make_confirm_message_response(message, channel):
 
 
 @handle_intent('SetChannel')
+@require_access_token
 def handle_set_channel_intent(request):
     message = request.session.get('message')
     channel = request.slots.get('channel')
@@ -57,6 +70,7 @@ def handle_set_channel_intent(request):
 
 
 @handle_intent('SetMessage')
+@require_access_token
 def handle_set_message_intent(request):
     message = request.slots.get('message')
     channel = request.session.get('channel')
@@ -72,6 +86,7 @@ def handle_set_message_intent(request):
 
 
 @handle_intent('SetChannelMessage')
+@require_access_token
 def handle_set_channel_message_intent(request):
     channel = request.slots.get('channel')
     message = request.slots.get('message')
@@ -79,6 +94,7 @@ def handle_set_channel_message_intent(request):
 
 
 @handle_intent('AMAZON.YesIntent')
+@require_access_token
 def handle_confirmation(request):
     if request.session.get('confirming_channel'):
         return make_set_message_response(request.session.get('channel'))
@@ -96,6 +112,7 @@ def handle_confirmation(request):
 
 
 @handle_intent('AMAZON.NoIntent')
+@require_access_token
 def handle_no(request):
     if request.session.get('confirming_channel'):
         return make_set_channel_response(message=request.session.get('message'), retry=True)
@@ -107,12 +124,8 @@ def handle_no(request):
 
 @handle_intent('StartMessage')
 @handle_launch_request
+@require_access_token
 def handle_start_message(request):
-    if not request.access_token:
-        return Response(
-            speech=PlainTextSpeech('You must sign in first'),
-            card=LinkAccountCard(),
-        )
     return make_set_channel_response()
 
 
@@ -128,6 +141,7 @@ def handle_cancel_intent(request):
 
 
 @handle_intent('AMAZON.StartOverIntent')
+@require_access_token
 def handle_start_over_intent(request):
     return make_set_channel_response()
 
