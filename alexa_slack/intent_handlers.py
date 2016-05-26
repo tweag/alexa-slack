@@ -54,7 +54,9 @@ def make_confirm_message_response(message, channel):
 def handle_set_channel_intent(request):
     message = request.session.get('message')
     channel = request.slots.get('channel')
-    if message and channel:
+    if not channel:
+        return make_set_channel_response(message)
+    elif message and channel:
         return make_confirm_message_response(message, channel)
     elif request.session.get('channel'):
         # if channel was already set, assume this was misinterpreted and should
@@ -74,7 +76,9 @@ def handle_set_channel_intent(request):
 def handle_set_message_intent(request):
     message = request.slots.get('message')
     channel = request.session.get('channel')
-    if message and channel:
+    if not message:
+        return make_set_message_response(channel)
+    elif message and channel:
         return make_confirm_message_response(message, channel)
     elif request.session.get('message'):
         # if message was already set, assume this was misinterpreted and should
@@ -90,6 +94,10 @@ def handle_set_message_intent(request):
 def handle_set_channel_message_intent(request):
     channel = request.slots.get('channel')
     message = request.slots.get('message')
+    if not message:
+        return make_set_message_response(channel)
+    elif not channel:
+        return make_set_channel_response(message)
     return make_confirm_message_response(message, channel)
 
 

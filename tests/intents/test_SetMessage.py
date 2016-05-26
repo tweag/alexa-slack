@@ -27,6 +27,29 @@ class TestSetMessageIntentWhenChannelSet(_AlexaTestCase):
         )
 
 
+class TestSetMessageIntentWithInvalidData(_AlexaTestCase):
+
+    channel = 'foo'
+
+    def input(self):
+        return self.make_intent_request(
+            'SetMessage', session={'channel': self.channel}, message=None)
+
+    def should_not_end_session(self):
+        self.assertFalse(self.output.response.shouldEndSession)
+
+    def should_set_session_attributes(self):
+        self.assertEqual(self.output.sessionAttributes, {
+            'channel': self.channel,
+        })
+
+    def should_ask_for_confirmation(self):
+        self.assertEqual(
+            self.output.response.outputSpeech.text,
+            'What would you like to post?'
+        )
+
+
 class TestSetMessageWithoutChannel(_AlexaTestCase):
 
     message = 'This is my message'
