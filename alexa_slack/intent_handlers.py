@@ -5,6 +5,18 @@ from pylexa.response import LinkAccountCard, PlainTextSpeech, Response
 from alexa_slack.slack import post_to_slack
 
 
+def require_access_token(func):
+    def inner(request):
+        if not request.access_token:
+            return Response(
+                speech=PlainTextSpeech('You must sign in first'),
+                card=LinkAccountCard(),
+            )
+        else:
+            return func(request)
+    return inner
+
+
 def make_set_channel_response(message=None, retry=False):
     text = 'What channel would you like to post your message to?'
     if retry:
