@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from urllib import urlencode
 
-from flask import redirect, request
+from flask import redirect, render_template, request
 import requests
 
 from alexa_slack import app
@@ -20,7 +20,7 @@ def oauth_entry_point():
         client_id=client_id
     ))
     redirect_url = '{}?{}'.format(url, query_string)
-    return redirect(redirect_url)
+    return render_template('account_link.html', redirect_url=redirect_url)
 
 
 @app.route('/oauth/redirect')

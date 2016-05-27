@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title>Chat Bot for Slack</title>
+  </head>
+  <body>
+    <p>
+      In order to link your account, you must allow access to your Slack team.
+    </p>
+
+    <p>
+      You will be automatically redirected to allow access in 3 seconds. If you are not redirected, <a href="{{ redirect_url }}">click here</a>.
+    </p>
+    <script>
+      window.setTimeout(function() {
+        window.location.replace("{{ redirect_url | safe }}");
+      }, 3000);
+    </script>
+  </body>
+</html>
