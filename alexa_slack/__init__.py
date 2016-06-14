@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, render_template, request
 
 from pylexa.app import alexa_blueprint
 from pylexa.response import AlexaResponseWrapper
@@ -16,6 +16,11 @@ app.response_class = AlexaResponseWrapper
 def log_request_json():
     print request.headers
     print request.get_data()
+
+
+@app.route('/privacy')
+def show_privacy_policy():
+    return render_template('privacy_policy.html')
 
 
 import alexa_slack.intent_handlers
