@@ -44,7 +44,7 @@ def log_request_json():
             for key, value in sorted(log_items.items())
         ]))
     except Exception as ex:
-        print('failed to log request: {}'.format(ex))
+        logger.info('failed to log request: %s', ex)
 
 
 @app.route('/privacy')
