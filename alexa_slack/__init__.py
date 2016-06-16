@@ -1,4 +1,6 @@
+import logging
 import json
+import sys
 
 from flask import Flask, render_template, request
 
@@ -13,8 +15,17 @@ alexa_blueprint.app_id = ALEXA_APP_ID
 app.register_blueprint(alexa_blueprint)
 app.response_class = AlexaResponseWrapper
 
+logger = app.logger
 
-@alexa_blueprint.before_request
+@app.before_first_request
+def setup_logging():
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+
+
+@app.before_request
 def log_request_json():
     try:
         data = json.loads(request.get_data())
@@ -28,12 +39,10 @@ def log_request_json():
         }
         if 'intent' in requestData:
             log_items['intent'] = requestData.get('intent', {}).get('name')
-        print(
-            ' '.join([
-                '{}={}'.format(key, value)
-                for key, value in sorted(log_items.items())
-            ])
-        )
+        logger.info('Got request: %s', ' '.join([
+            '{}={}'.format(key, value)
+            for key, value in sorted(log_items.items())
+        ]))
     except Exception as ex:
         print('failed to log request: {}'.format(ex))
 
