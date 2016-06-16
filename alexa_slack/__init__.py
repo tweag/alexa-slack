@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request
 
 from pylexa.app import alexa_blueprint
@@ -12,10 +14,28 @@ app.register_blueprint(alexa_blueprint)
 app.response_class = AlexaResponseWrapper
 
 
-@app.before_request
+@alexa_blueprint.before_request
 def log_request_json():
-    print request.headers
-    print request.get_data()
+    try:
+        data = json.loads(request.get_data())
+        sessionData = data.get('session', {})
+        requestData = data.get('request', {})
+        log_items = {
+            'newSession': sessionData.get('new'),
+            'sessionId': sessionData.get('sessionId'),
+            'timestamp': requestData.get('timestamp'),
+            'requestType': requestData.get('type')
+        }
+        if 'intent' in requestData:
+            log_items['intent'] = requestData.get('intent', {}).get('name')
+        print(
+            ' '.join([
+                '{}={}'.format(key, value)
+                for key, value in sorted(log_items.items())
+            ])
+        )
+    except Exception as ex:
+        print('failed to log request: {}'.format(ex))
 
 
 @app.route('/privacy')
