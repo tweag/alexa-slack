@@ -38,7 +38,9 @@ def log_request_json():
             'requestType': requestData.get('type')
         }
         if 'intent' in requestData:
-            log_items['intent'] = requestData.get('intent', {}).get('name')
+            intent = requestData.get('intent', {})
+            log_items['intent'] = intent.get('name')
+            log_items['slots'] = json.dumps(intent.get('slots'))
         logger.info('Got request: %s', ' '.join([
             '{}={}'.format(key, value)
             for key, value in sorted(log_items.items())
