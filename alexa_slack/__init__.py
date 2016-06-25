@@ -5,17 +5,15 @@ import sys
 from flask import Flask, render_template, request
 
 from pylexa.app import alexa_blueprint
-from pylexa.response import AlexaResponseWrapper
 
 from alexa_slack.constants import ALEXA_APP_ID
 
 
 app = Flask(__name__)
-alexa_blueprint.app_id = ALEXA_APP_ID
+app.config['app_id'] = ALEXA_APP_ID
 app.register_blueprint(alexa_blueprint)
-app.response_class = AlexaResponseWrapper
-
 logger = app.logger
+
 
 @app.before_first_request
 def setup_logging():
