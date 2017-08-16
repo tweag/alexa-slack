@@ -9,7 +9,7 @@ def post_to_slack(channel, text, token):
         'token': token,
         'channel': channel,
         'text': text,
-        'as_user': False,
+        'as_user': True,
     })
     if res.json()['ok']:
         return PlainTextSpeech("Okay. Your message has been posted.")
